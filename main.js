@@ -14,7 +14,6 @@ function sanitizeText(text) {
 
 function addMessageToPage(message) {
     const element = document.createElement('li');
-    element.classList.add('card','m-2')
     element.innerHTML = `
         <div class="col-sm-10">
         <p>${sanitizeText(message.content)}</p>
