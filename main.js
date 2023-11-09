@@ -1,7 +1,6 @@
 import { supabase } from "./supabase.js";
 
 const messagesElement = document.querySelector('#messages')
-const roomOne = supabase.channel('mainchat') // set your topic here
 
 
 // Create a function to handle inserts
@@ -56,10 +55,19 @@ async function init() {
     console.log(messages);
     messages.forEach(addMessageToPage);
 
+
+
     supabase
-    .channel('chats')
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, handleInserts)
+    .channel('room1')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+      console.log('Change received!', payload)
+    })
     .subscribe()
+    .then(() => {
+        addMessageToPage(payload.new);
+    });
+  
+  
 
 }
 
