@@ -1,4 +1,9 @@
 import { supabase } from "./supabase.js";
+import { Auth } from '@supabase/auth-ui-react'
+import {
+    // Import predefined theme
+    ThemeSupa,
+  } from '@supabase/auth-ui-shared'
 
 const messagesElement = document.querySelector('#messages')
 
@@ -68,4 +73,13 @@ async function init() {
 
 }
 
-init();
+//init();
+
+const App = () => (
+    <Auth
+      supabaseClient={supabase}
+      {/* Apply predefined theme */}
+      appearance={{ theme: ThemeSupa }}
+      providers={['google', 'facebook', 'twitter']}
+    />
+  )
