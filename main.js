@@ -74,6 +74,9 @@ async function init() {
             username: formData.get('username'),
             content: formData.get('content'),
         };
+        if (message.username == '') {
+            message.username = 'Anonymous'
+        }
     // After recieving signup input register to users - should add check to see if exists
     supabase
         .from('messages')
