@@ -21,7 +21,7 @@ function addMessageToPage(message) {
         <font size=1>${sanitizeText(message.username)}</font>
         </div>`
     messagesElement.append(element);
-    element.scrollIntoView({ behavior: 'smooth' });
+    element.scrollIntoView({ behavior: "smooth", block: "end" });
 
 }
 
