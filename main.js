@@ -1,7 +1,45 @@
 import { supabase } from "./supabase.js";
-
 const messagesElement = document.querySelector('#messages')
 
+
+// Define a function to use DOMPurify once it's loaded
+function useDOMPurify() {
+    // Ensure DOMPurify is available before using it
+    if (typeof DOMPurify !== 'undefined') {
+        // HTML content to be sanitized
+        const untrustedHTML = '<script>alert("XSS Attack!");</script> This is unsafe content.';
+        
+        // Sanitize the HTML content using DOMPurify
+        const sanitizedHTML = DOMPurify.sanitize(untrustedHTML);
+        
+        // Display the sanitized content
+        //const sanitizedElement = document.getElementById('sanitized-content');
+        //sanitizedElement.innerHTML = sanitizedHTML;
+    } else {
+        console.error('DOMPurify is not available yet.');
+    }
+}
+
+// Check if DOMPurify is already loaded or listen for the script load event
+if (typeof DOMPurify === 'undefined') {
+    // Define a callback function to execute when DOMPurify is loaded
+    function loadDOMPurify() {
+        useDOMPurify();
+    }
+
+    // Create a new script element to load DOMPurify from a CDN
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js';
+
+    // Set the onload event to the callback function
+    script.onload = loadDOMPurify;
+
+    // Append the script element to the document's body
+    document.body.appendChild(script);
+} else {
+    // DOMPurify is already loaded, so use it immediately
+    useDOMPurify();
+}
 
 // Create a function to handle inserts
 const handleInserts = (payload) => {
@@ -13,12 +51,10 @@ function sanitizeText(text) {
 }
 
 function addMessageToPage(message) {
-    const element = document.createElement('li');
+    const element = document.createElement('ul');
     element.innerHTML = `
-        <div class="col-sm-10">
-        <p>${sanitizeText(message.content)}</p>
-        <font size=1>${sanitizeText(message.username)}</font>
-        </div>`
+        ${sanitizeText(message.content)}
+        <font size=1>${sanitizeText("/" + message.username)}</font>`
     messagesElement.append(element);
     //element.scrollIntoView({ behavior: "smooth", block: "end" });
 
@@ -30,14 +66,34 @@ const form = document.querySelector('form')
 const contentElement = document.querySelector('#content');
 
 async function init() {
+    // Message Logic
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const message = {
+            username: formData.get('username'),
+            content: formData.get('content'),
+        };
+    // After recieving signup input register to users - should add check to see if exists
+    supabase
+        .from('messages')
+        .insert([
+            message,
+        ]).then(() => { 
+            console.log('Message sent!'); 
+        });
+    });
+    
+    /*
+    // Signup Logic
     form.addEventListener('submit', (event) => {
         event.preventDefault();
         const formData = new FormData(form);
         const user = {
             username: formData.get('username'),
-            content: formData.get('password'),
+            password: formData.get('password'),
         };
-    contentElement.value = '';
+    // After recieving signup input register to users - should add check to see if exists
     supabase
         .from('users')
         .insert([
@@ -47,14 +103,44 @@ async function init() {
         });
     });
 
+
+// index.js
+function handleLogin() {
+    // Add your login functionality here
+    console.log('Login button clicked');
+    // You can call Supabase authentication functions or any other login logic here
+    
+    //login logic
+    form.addEventListener('log-in', (event) => {
+        console.log("logging in!");
+        event.preventDefault();
+        const formData = new FormData(form);
+        const user = {
+            username: formData.get('username'),
+            password: formData.get('password'),
+        };
+    // After recieving signup input register to users - should add check to see if exists
+    console.log("trying to log in...")
+    supabase
+        .from('users')
+        .select([
+            user,
+        ]).then(() => { 
+            console.log('User Verified!'); 
+        });
+    });
+    */
+}
+
+// Attach an event listener to the "Login" button
+// document.getElementById('login-button').addEventListener('click', handleLogin);
+    
     const { data: messages, error } = await supabase
         .from('messages')
         .select('*')
     
     console.log(messages);
     messages.forEach(addMessageToPage);
-
-
 
     supabase
     .channel('room1')
@@ -66,61 +152,6 @@ async function init() {
   
   
 
-}
 
-form.addEventListener('sign-up', (event) => {
-    event.preventDefault();
-    const formData = new FormData(form);
-    const message = {
-        username: formData.get('username'),
-        content: formData.get('password'),
-    };
-contentElement.value = '';
-supabase
-    .from('users')
-    .insert([
-        message,
-    ]).then(() => { 
-        console.log('Message sent!'); 
-    });
-});
 
-// Define the signUpNewUser function
-async function signUpNewUser() {
-    const email = 'example@email.com';
-    const password = 'example-password';
-    const { data, error } = await supabase.auth.signUp({
-        email: 'example@email.com',
-        password: 'example-password',
-      })
-
-    if (error) {
-        console.log('Error signing up:');
-    } else {
-        console.log('Successfully signed up:');
-    }
-}
-
-// Event listener for the "Sign Up" button
-document.getElementById('sign-up').addEventListener('click', () => {
-    signUpNewUser();
-});
-
-const { data, error } = await supabase.auth.signInWithPassword({
-    email: 'example@email.com',
-    password: 'example-password',
-  })
-
-async function signOut() {
-const { error } = await supabase.auth.signOut()
-}
-
-async function signInWithEmail() {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: 'example@email.com',
-      password: 'example-password',
-      options: {
-        redirectTo: 'https//example.com/welcome'
-      }
-    })
-  }
+init();
