@@ -20,8 +20,10 @@ function addMessageToPage(message) {
         <font size=1>${sanitizeText(message.username)}</font>
         </div>`
     messagesElement.append(element);
-    element.scrollIntoView({ behavior: "smooth", block: "end" });
+    //element.scrollIntoView({ behavior: "smooth", block: "end" });
 
+    // Scroll to the latest message by targeting the `messagesElement` container
+    messagesElement.scrollTop = messagesElement.scrollHeight;
 }
 
 const form = document.querySelector('form')
