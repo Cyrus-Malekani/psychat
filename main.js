@@ -1,9 +1,4 @@
 import { supabase } from "./supabase.js";
-import { Auth } from '@supabase/auth-ui-react'
-import {
-    // Import predefined theme
-    ThemeSupa,
-  } from '@supabase/auth-ui-shared'
 
 const messagesElement = document.querySelector('#messages')
 
@@ -74,27 +69,3 @@ async function init() {
 }
 
 init();
-
-async function signUpNewUser() {
-    const { data, error } = await supabase.auth.signUp({
-      email: 'example@email.com',
-      password: 'example-password',
-      options: {
-        redirectTo: 'https//example.com/welcome'
-      }
-    })
-  }
-
-  async function signOut() {
-    const { error } = await supabase.auth.signOut()
-  }
-
-  async function signInWithEmail() {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: 'example@email.com',
-      password: 'example-password',
-      options: {
-        redirectTo: 'https//example.com/welcome'
-      }
-    })
-  }

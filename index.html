@@ -1,54 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Psychat</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-    </head>
-    <body>
-        <div class="container main-area">
-            <ul class="list-unstyled" id="messages">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth with Supabase and Google</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-            </ul>
-        </div>
-        <form>
-            <fieldset>
-               <!--
-                <div class="form-group">
-                    <label for="username" class="form-label mt-4">username</label>
-                    <input name="username" type="text" class="form-control" id="username">
-                </div>
-                -->
-                <div class="form-group">
-                    <label for="content" class="form-label mt-4">Message</label>
-                    <input name="content" type="text" class="form-control" id="content">
-                </div>
-                <button type="submit" class="btn btn-primary">Send</button>
-            </fieldset>
-        </form>
-        <div
-            id="g_id_onload"
-            data-client_id="<client ID>"
-            data-context="signin"
-            data-ux_mode="popup"
-            data-callback="handleSignInWithGoogle"
-            data-nonce=""
-            data-auto_select="true"
-            data-itp_support="true"
-            ></div>
+</head>
+<body>
+    <h1>Welcome to My App</h1>
 
-            <div
-            class="g_id_signin"
-            data-type="standard"
-            data-shape="pill"
-            data-theme="outline"
-            data-text="signin_with"
-            data-size="large"
-            data-logo_alignment="left"
-            ></div>
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
-        <script type="module" src="./main.js"></script>
-    </body>
+    <!-- Google OAuth Login Button -->
+    <button id="google-login">Login with Google</button>
+    <script src="supabase.js" type="module"></script>
+    <script>
+        
+        // Replace these with your actual Supabase and Google OAuth credentials
+        const SUPABASE_URL = 'https://mlwjjtayomdkstvpdfdz.supabase.co';
+        const GOOGLE_CLIENT_ID = '970622602692-bgf84vbd61tc2vorikh2hao3di5tf07f.apps.googleusercontent.com';
+
+        // Callback URL as specified in your Supabase and Google OAuth configurations
+        const CALLBACK_URL = 'https://mlwjjtayomdkstvpdfdz.supabase.co/auth/v1/callback';
+
+        // Initialize Supabase
+        const { createClient} = supabase
+        supabase = createClient(SUPABASE_URL, { autoRefreshToken: true });
+        
+
+        // Event listener for the Google login button
+        document.getElementById('google-login').addEventListener('click', async () => {
+            // Open the Google OAuth authentication page in a new window
+            const authWindow = window.open(`https://accounts.google.com/o/oauth2/auth?response_type=code&redirect_uri=${encodeURIComponent(CALLBACK_URL)}&client_id=${GOOGLE_CLIENT_ID}&scope=profile email openid&access_type=offline`, '_blank', 'width=500,height=600');
+
+            // Listen for messages from the authentication window
+            window.addEventListener('message', async (event) => {
+                if (event.origin === window.location.origin) {
+                    // The authentication window will post a message with the user's credentials
+                    const userCredentials = event.data;
+
+                    if (userCredentials) {
+                        // Use the user's credentials to sign in or create an account in Supabase
+                        const { data, error } = await supabase.auth.signInWithOAuth({
+                            provider: 'github'
+                        })
+                        if (error) {
+                            console.error('Error signing in with Google:', error);
+                        } else {
+                            console.log('Successfully signed in with Google!');
+                        }
+
+                        // Close the authentication window
+                        authWindow.close();
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
 </html>

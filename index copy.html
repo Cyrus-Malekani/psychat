@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Psychat</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container main-area">
+            <ul class="list-unstyled" id="messages">
+
+            </ul>
+        </div>
+        <form>
+            <fieldset>
+               <!--
+                <div class="form-group">
+                    <label for="username" class="form-label mt-4">username</label>
+                    <input name="username" type="text" class="form-control" id="username">
+                </div>
+                -->
+                <div class="form-group">
+                    <label for="content" class="form-label mt-4">Message</label>
+                    <input name="content" type="text" class="form-control" id="content">
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </fieldset>
+        </form>
+        <div
+            id="g_id_onload"
+            data-client_id="<client ID>"
+            data-context="signin"
+            data-ux_mode="popup"
+            data-callback="handleSignInWithGoogle"
+            data-nonce=""
+            data-auto_select="true"
+            data-itp_support="true"
+            ></div>
+
+            <div
+            class="g_id_signin"
+            data-type="standard"
+            data-shape="pill"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="large"
+            data-logo_alignment="left"
+            ></div>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+        <script type="module" src="./main.js"></script>
+    </body>
+</html>
