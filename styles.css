@@ -3,6 +3,7 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
+    
 }
 
 .body {
@@ -10,8 +11,13 @@
     width: 100vw;
 }
 
+form {
+    flex: 0 0 auto;
+}
+
 #messages {
     height: 80%;
     overflow-y: auto;
     overflow-x: hidden;
+    overflow: scroll;
 }
