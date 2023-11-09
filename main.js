@@ -33,17 +33,17 @@ async function init() {
     form.addEventListener('submit', (event) => {
         event.preventDefault();
         const formData = new FormData(form);
-        const message = {
+        const user = {
             username: formData.get('username'),
-            content: formData.get('content'),
+            content: formData.get('password'),
         };
     contentElement.value = '';
     supabase
-        .from('messages')
+        .from('users')
         .insert([
-            message,
+            user,
         ]).then(() => { 
-            console.log('Message sent!'); 
+            console.log('User Added!'); 
         });
     });
 
@@ -68,4 +68,59 @@ async function init() {
 
 }
 
-init();
+form.addEventListener('sign-up', (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const message = {
+        username: formData.get('username'),
+        content: formData.get('password'),
+    };
+contentElement.value = '';
+supabase
+    .from('users')
+    .insert([
+        message,
+    ]).then(() => { 
+        console.log('Message sent!'); 
+    });
+});
+
+// Define the signUpNewUser function
+async function signUpNewUser() {
+    const email = 'example@email.com';
+    const password = 'example-password';
+    const { data, error } = await supabase.auth.signUp({
+        email: 'example@email.com',
+        password: 'example-password',
+      })
+
+    if (error) {
+        console.log('Error signing up:');
+    } else {
+        console.log('Successfully signed up:');
+    }
+}
+
+// Event listener for the "Sign Up" button
+document.getElementById('sign-up').addEventListener('click', () => {
+    signUpNewUser();
+});
+
+const { data, error } = await supabase.auth.signInWithPassword({
+    email: 'example@email.com',
+    password: 'example-password',
+  })
+
+async function signOut() {
+const { error } = await supabase.auth.signOut()
+}
+
+async function signInWithEmail() {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: 'example@email.com',
+      password: 'example-password',
+      options: {
+        redirectTo: 'https//example.com/welcome'
+      }
+    })
+  }
