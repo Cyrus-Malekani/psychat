@@ -60,12 +60,10 @@ async function init() {
     supabase
     .channel('room1')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-      console.log('Change received!', payload)
+      console.log('Change received!', payload);
+      addMessageToPage(payload.new);
     })
-    .subscribe()
-    .then(() => {
-        addMessageToPage(payload.new);
-    });
+    .subscribe();
   
   
 
